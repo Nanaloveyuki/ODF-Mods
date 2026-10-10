@@ -1,0 +1,36 @@
+optional use irismenus@std
+use prisonernames@odf.nanaloveyuki.prisonernames
+
+fn title(): string { return lang("OPN_Title") }
+fn intro(): string { return lang("OPN_SettingsIntro") }
+fn enabled_label(): string { return lang("OPN_EnabledToggle") }
+fn editor_label(): string { return lang("OPN_OpenWindow") }
+
+if irismenus.available {
+    irismenus.registry(pages: [{
+        id: "general",
+        title: title,
+        scope: "game",
+        items: [
+            {
+                id: "intro",
+                kind: "label",
+                label: intro
+            },
+            {
+                id: "enabled",
+                kind: "checkbox",
+                label: enabled_label,
+                key: "enabled",
+                default: true
+            },
+            {
+                id: "editor",
+                kind: "button",
+                label: editor_label,
+                action: prisonernames.open_editor,
+                enabled: prisonernames.game_available
+            }
+        ]
+    }])
+}

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <OPN_Title>Prisoner names</OPN_Title>
+  <OPN_SettingsIntro>Open a save to edit the naming rule and check each prisoner's alias.</OPN_SettingsIntro>
+  <OPN_EnabledToggle>Show prisoner aliases</OPN_EnabledToggle>
+  <OPN_NoGame>Enter a save to open the editor.</OPN_NoGame>
+  <OPN_OpenWindow>Open editor</OPN_OpenWindow>
+  <OPN_GameChanged>This save is no longer active. Close the window and open it again.</OPN_GameChanged>
+  <OPN_Enabled>Aliases on</OPN_Enabled>
+  <OPN_Disabled>Aliases off</OPN_Disabled>
+  <OPN_Revision>Revision</OPN_Revision>
+  <OPN_Unapplied>Draft not applied</OPN_Unapplied>
+  <OPN_Apply>Apply</OPN_Apply>
+  <OPN_Enable>Turn aliases on</OPN_Enable>
+  <OPN_Disable>Turn aliases off</OPN_Disable>
+  <OPN_Refresh>Refresh</OPN_Refresh>
+  <OPN_Restore>Restore applied</OPN_Restore>
+  <OPN_DefaultChinese>Load Chinese draft</OPN_DefaultChinese>
+  <OPN_DefaultEnglish>Load English draft</OPN_DefaultEnglish>
+  <OPN_Applied>Rule applied. Names refresh from the prisoners' current condition.</OPN_Applied>
+  <OPN_KeepActive>The draft was not applied. The previous rule is still in use.</OPN_KeepActive>
+  <OPN_Refreshed>Names refreshed.</OPN_Refreshed>
+  <OPN_Restored>Draft restored from the applied rule.</OPN_Restored>
+  <OPN_DefaultLoaded>Default draft loaded. Apply it to use these names.</OPN_DefaultLoaded>
+  <OPN_Error>Rule error</OPN_Error>
+  <OPN_Script>Naming rule</OPN_Script>
+  <OPN_Prisoners>Prisoners</OPN_Prisoners>
+  <OPN_NoPrisoners>No colony prisoners. Capture someone, then refresh.</OPN_NoPrisoners>
+  <OPN_NoSelection>Select a prisoner to set an individual alias.</OPN_NoSelection>
+  <OPN_Shown>Shown</OPN_Shown>
+  <OPN_Original>Original</OPN_Original>
+  <OPN_UsingOriginal>Showing the original name</OPN_UsingOriginal>
+  <OPN_UsingRule>Using the rule</OPN_UsingRule>
+  <OPN_UsingManual>Using an individual alias</OPN_UsingManual>
+  <OPN_Jump>Go to</OPN_Jump>
+  <OPN_Manual>Alias</OPN_Manual>
+  <OPN_SetManual>Set alias</OPN_SetManual>
+  <OPN_Preview>Draft preview</OPN_Preview>
+  <OPN_PreviewFailed>Draft preview failed</OPN_PreviewFailed>
+  <OPN_Clear>Clear</OPN_Clear>
+  <OPN_ManualSet>Individual alias set. It stays until cleared.</OPN_ManualSet>
+  <OPN_ManualCleared>Individual alias cleared. The rule is used again.</OPN_ManualCleared>
+  <OPN_ManualFailed>Could not set that alias</OPN_ManualFailed>
+  <OPN_Unnamed>Unnamed</OPN_Unnamed>
+  <OPN_ShowHelp>Show help</OPN_ShowHelp>
+  <OPN_HideHelp>Hide help</OPN_HideHelp>
+  <OPN_Help>Write fn codename(pawn). Return an alias, or null or blank to show the original name. Useful values: number_text (001), original_name, race, age, interaction, resistance, score, grade. pawn.value("mark", 0) reads a stored value. Apply activates the draft. Restore and defaults only edit the draft. Rules, scores, grades, stored values and individual aliases are saved with the game.</OPN_Help>
+  <OPN_PolicyPage>Name policy</OPN_PolicyPage>
+  <OPN_PolicyIntro>Set the score, grades, race prefixes and name pattern for this save. Advanced rules open in the browser editor.</OPN_PolicyIntro>
+  <OPN_SourceMode>Name source</OPN_SourceMode>
+  <OPN_CustomSource>Custom rule</OPN_CustomSource>
+  <OPN_ConfigSource>Pattern</OPN_ConfigSource>
+  <OPN_UseCustom>Keep the current rule</OPN_UseCustom>
+  <OPN_UsePattern>Use pattern naming</OPN_UsePattern>
+  <OPN_UsePatternConfirm>Replace this save's custom naming rule and naming draft with the current pattern? Event rules and individual overrides remain unchanged.</OPN_UsePatternConfirm>
+  <OPN_NameStyle>Shown name</OPN_NameStyle>
+  <OPN_Style_code>Pattern</OPN_Style_code>
+  <OPN_Style_short>Short name</OPN_Style_short>
+  <OPN_Style_full>Full name</OPN_Style_full>
+  <OPN_Style_first>First name</OPN_Style_first>
+  <OPN_Style_last>Last name</OPN_Style_last>
+  <OPN_NeutralScore>Starting score</OPN_NeutralScore>
+  <OPN_ResistanceScore>Score for each resistance point</OPN_ResistanceScore>
+  <OPN_Pattern>Name pattern</OPN_Pattern>
+  <OPN_Placeholders>Tokens: {race_prefix} {number_text} {grade} {score} {original_name} {original_full_name} {first_name} {last_name} {interaction_label}. Escape braces with {{ and }}.</OPN_Placeholders>
+  <OPN_RacePrefixes>Race prefixes</OPN_RacePrefixes>
+  <OPN_Race>Race</OPN_Race>
+  <OPN_Prefix>Prefix</OPN_Prefix>
+  <OPN_AddRace>Add race prefix</OPN_AddRace>
+  <OPN_Grades>Grades</OPN_Grades>
+  <OPN_GradeName>Grade</OPN_GradeName>
+  <OPN_AddGrade>Add grade</OPN_AddGrade>
+  <OPN_Remove>Remove</OPN_Remove>
+  <OPN_SavePolicy>Save name policy</OPN_SavePolicy>
+  <OPN_PolicyFailed>The name policy was not saved.</OPN_PolicyFailed>
+  <OPN_PolicyPreview>Sample</OPN_PolicyPreview>
+  <OPN_PolicyPreviewFailed>Sample failed</OPN_PolicyPreviewFailed>
+  <OPN_Preset_code>Use code pattern</OPN_Preset_code>
+  <OPN_Preset_grade>Use grade pattern</OPN_Preset_grade>
+  <OPN_Preset_short>Use short names</OPN_Preset_short>
+  <OPN_Preset_full>Use full names</OPN_Preset_full>
+  <OPN_Score>Score</OPN_Score>
+  <OPN_Grade>Grade</OPN_Grade>
+  <OPN_ScoreAutomatic>Event scoring resumed; current score retained.</OPN_ScoreAutomatic>
+  <OPN_NextGrade>Next grade</OPN_NextGrade>
+  <OPN_NoNextGrade>No higher grade</OPN_NoNextGrade>
+  <OPN_OpenEditor>Open browser editor</OPN_OpenEditor>
+  <OPN_OpenEditorConfirm>Open the browser editor for this save?</OPN_OpenEditorConfirm>
+  <OPN_Roster>Roster</OPN_Roster>
+  <OPN_BrowserEditing>Advanced naming and event rules open in the browser editor.</OPN_BrowserEditing>
+  <OPN_CustodyScore>Score for each full day in custody</OPN_CustodyScore>
+  <OPN_PrisonBreakScore>Score for a prison break</OPN_PrisonBreakScore>
+  <OPN_OpenLower>Any lower score</OPN_OpenLower>
+  <OPN_SetScore>Set score</OPN_SetScore>
+  <OPN_SetGrade>Set grade</OPN_SetGrade>
+  <OPN_ScoreSet>Score set. Events will not change it.</OPN_ScoreSet>
+  <OPN_GradeSet>Grade set. The score stays unchanged.</OPN_GradeSet>
+</LanguageData>
