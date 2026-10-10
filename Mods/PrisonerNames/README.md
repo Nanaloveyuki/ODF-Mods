@@ -2,6 +2,8 @@
 
 包名：`odf.nanaloveyuki.prisonernames`。适用 RimWorld 1.6，依赖 Harmony、Oxygendsl 和 IrisMenus。独立实现，不依赖 RHAH；不要与 `Lezhizhong.PrisonerCodename` 同时启用。
 
+发布图片均为黑底白字，主标题分两行显示 Prisoner Name / 囚犯代号。`About/Preview.png`（1536×1024）的小字副标题为 Oxygen DSL Framework；`About/ModIcon.png`（1254×1254）的副标题为 O.D.F.。
+
 ## 使用
 
 1. 安装 Oxygendsl、IrisMenus 与本 Mod。IrisMenus 是硬依赖。进入存档后，在 IrisMenus 打开「囚犯代号」。
