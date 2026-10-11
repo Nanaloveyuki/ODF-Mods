@@ -29,6 +29,7 @@ namespace Odf.PrisonerNames
             facts["manual_score"] = manualScore;
             facts["manual_grade"] = manualGrade ?? string.Empty;
             facts["race"] = race;
+            facts["age"] = ReadDouble(root, "age", 18d);
             facts["race_label"] = ReadString(root, "race_label");
             facts["race_prefix"] = policy == null ? string.Empty : policy.PrefixFor(race, chinese);
             facts["original_name"] = First(root, "original_name", "name");
@@ -47,7 +48,7 @@ namespace Odf.PrisonerNames
         public static string Evaluate(string source, string factsJson, NamePolicy policy, bool chinese, IOxygenLocalization localization = null)
         {
             Dictionary<string, object> facts = Project(factsJson, policy, chinese);
-            var host = new PreviewFacts(facts, policy == null ? NameStyle.Code : policy.Style);
+            var host = new PreviewFacts(facts, policy, chinese);
             NamingRules rules = NamingRules.Compile(source, localization: localization);
             return rules.Evaluate(new PawnContext
             {
@@ -60,10 +61,10 @@ namespace Odf.PrisonerNames
             readonly Dictionary<string, object> facts;
             readonly PreviewFormat format;
             readonly PreviewValue values;
-            public PreviewFacts(Dictionary<string, object> facts, NameStyle style)
+            public PreviewFacts(Dictionary<string, object> facts, NamePolicy policy, bool chinese)
             {
                 this.facts = facts;
-                format = new PreviewFormat(facts, style);
+                format = new PreviewFormat(facts, policy, chinese);
                 values = new PreviewValue(facts);
             }
 
@@ -78,11 +79,14 @@ namespace Odf.PrisonerNames
         sealed class PreviewFormat : IOxygenHostCallable
         {
             readonly Dictionary<string, object> facts;
-            readonly NameStyle style;
-            public PreviewFormat(Dictionary<string, object> facts, NameStyle style) { this.facts = facts; this.style = style; }
+            readonly NamePolicy policy;
+            readonly bool chinese;
+            public PreviewFormat(Dictionary<string, object> facts, NamePolicy policy, bool chinese) { this.facts = facts; this.policy = policy; this.chinese = chinese; }
             public object Invoke(IList<object> positional, IDictionary<string, object> named)
             {
-                string pattern = positional != null && positional.Count > 0 ? Convert.ToString(positional[0], CultureInfo.InvariantCulture) : string.Empty;
+                string pattern = positional != null && positional.Count > 0 ? Convert.ToString(positional[0], CultureInfo.InvariantCulture) : null;
+                if (named != null && named.ContainsKey("pattern")) pattern = Convert.ToString(named["pattern"], CultureInfo.InvariantCulture);
+                if (pattern == null && policy != null) pattern = policy.PatternFor(Convert.ToString(facts["race"], CultureInfo.InvariantCulture), Convert.ToDouble(facts["age"], CultureInfo.InvariantCulture), chinese);
                 var tokens = new NameTokens
                 {
                     Number = Convert.ToInt32(facts["number"], CultureInfo.InvariantCulture),
@@ -100,7 +104,7 @@ namespace Odf.PrisonerNames
                     InteractionLabel = Convert.ToString(facts["interaction_label"], CultureInfo.InvariantCulture)
                 };
                 string formatted = NameFormatter.Format(pattern, tokens);
-                return NameFormatter.ApplyStyle(style, formatted, tokens);
+                return NameFormatter.ApplyStyle(policy == null ? NameStyle.Code : policy.Style, formatted, tokens);
             }
         }
 

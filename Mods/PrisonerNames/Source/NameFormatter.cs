@@ -78,19 +78,19 @@ namespace Odf.PrisonerNames
         {
             switch (token)
             {
-                case "number": case "编号": return tokens.Number.ToString(CultureInfo.InvariantCulture);
-                case "number_text": case "编号文本": return tokens.NumberText ?? string.Empty;
-                case "grade": case "等级": return tokens.Grade ?? string.Empty;
-                case "score": case "分数": return NamePolicy.FormatNumber(tokens.Score);
-                case "race": case "种族": return tokens.Race ?? string.Empty;
-                case "race_label": case "种族名称": return tokens.RaceLabel ?? string.Empty;
-                case "race_prefix": case "种族前缀": return tokens.RacePrefix ?? string.Empty;
-                case "original_name": case "原名": return tokens.OriginalName ?? string.Empty;
-                case "original_full_name": case "全名": return tokens.OriginalFullName ?? string.Empty;
+                case "number": return tokens.Number.ToString(CultureInfo.InvariantCulture);
+                case "number_text": return tokens.NumberText ?? string.Empty;
+                case "grade": return tokens.Grade ?? string.Empty;
+                case "score": return NamePolicy.FormatNumber(tokens.Score);
+                case "race": return tokens.Race ?? string.Empty;
+                case "race_label": return tokens.RaceLabel ?? string.Empty;
+                case "race_prefix": return tokens.RacePrefix ?? string.Empty;
+                case "original_name": return tokens.OriginalName ?? string.Empty;
+                case "original_full_name": return tokens.OriginalFullName ?? string.Empty;
                 case "original_short": return tokens.OriginalShort ?? string.Empty;
-                case "first_name": case "名字": return tokens.FirstName ?? string.Empty;
-                case "last_name": case "姓氏": return tokens.LastName ?? string.Empty;
-                case "interaction_label": case "处置方式": return tokens.InteractionLabel ?? string.Empty;
+                case "first_name": return tokens.FirstName ?? string.Empty;
+                case "last_name": return tokens.LastName ?? string.Empty;
+                case "interaction_label": return tokens.InteractionLabel ?? string.Empty;
                 default: throw new ArgumentException("Unknown name token '" + token + "'.");
             }
         }

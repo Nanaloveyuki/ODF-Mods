@@ -238,8 +238,6 @@ namespace Odf.PrisonerNames
             catch (Exception exception) { error = exception.Message; return false; }
             if (customMode && !replaceNamingRule)
             {
-                try { NameFormatter.Format(NamingLanguage.Chinese ? candidate.ChinesePattern : candidate.Pattern, SampleTokens(candidate)); }
-                catch (Exception exception) { error = exception.Message; return false; }
                 policy = candidate;
                 policyText = PolicyText(candidate);
                 revision++;
@@ -250,7 +248,7 @@ namespace Odf.PrisonerNames
             string previousDraft = draftSource;
             NamePolicy previousPolicy = policy;
             policy = candidate;
-            string generated = ConfigSource(candidate, NamingLanguage.Chinese);
+            string generated = ConfigSource();
             if (!Apply(generated))
             {
                 error = lastError;
@@ -263,16 +261,6 @@ namespace Odf.PrisonerNames
             customMode = false;
             policyText = PolicyText(candidate);
             return true;
-        }
-        static NameTokens SampleTokens(NamePolicy value)
-        {
-            return new NameTokens
-            {
-                Number = 1, NumberText = "001", Score = value.NeutralScore, Grade = value.GradeFor(value.NeutralScore),
-                Race = "Human", RaceLabel = "human", RacePrefix = value.PrefixFor("Human", NamingLanguage.Chinese),
-                OriginalName = "Ada", OriginalShort = "Ada", OriginalFullName = "Ada Sample",
-                FirstName = "Ada", LastName = "Sample", InteractionLabel = "recruit"
-            };
         }
 
 
@@ -398,22 +386,16 @@ namespace Odf.PrisonerNames
         }
 
 
-        internal static string ConfigSource(NamePolicy value, bool chinese)
+        internal static string ConfigSource()
         {
-            value = value ?? NamePolicy.CreateDefault();
-            string pattern = chinese ? value.ChinesePattern : value.Pattern;
-            return "fn codename(pawn): string? {\n    return pawn.formatted(\"" + Escape(pattern) + "\")\n}\n";
-        }
-
-        static string Escape(string text)
-        {
-            return (text ?? string.Empty).Replace("\\", "\\\\").Replace("\"", "\\\"");
+            return "fn codename(pawn): string? {\n    return pawn.formatted()\n}\n";
         }
 
         static NamePolicy NormalizePolicy(NamePolicy value)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
             NamePolicy copy = value.Clone();
+            copy.ValidateNaming();
             if (double.IsNaN(copy.NeutralScore) || double.IsInfinity(copy.NeutralScore))
                 throw new ArgumentException("The neutral score must be finite.");
             var seen = new HashSet<double>();
@@ -442,8 +424,21 @@ namespace Odf.PrisonerNames
             text.Append("---\n");
             for (int i = 0; i < value.Grades.Count; i++)
                 text.Append(value.Grades[i].Minimum.ToString("R", System.Globalization.CultureInfo.InvariantCulture)).Append('=').Append(value.Grades[i].Name).Append('\n');
+            text.Append("---ages\n").Append(value.UseAgePatterns ? "1" : "0").Append('\n');
+            for (int i = 0; i < value.Ages.Count; i++) AppendAge(text, value.Ages[i]);
+            for (int i = 0; i < value.RaceNames.Count; i++)
+            {
+                RaceNameRule race = value.RaceNames[i];
+                text.Append("---race\t").Append(Encode(race.Race)).Append('\t').Append(race.Enabled ? "1" : "0").Append('\n');
+                for (int j = 0; j < race.Ages.Count; j++) AppendAge(text, race.Ages[j]);
+            }
             return text.ToString();
         }
+
+        static void AppendAge(StringBuilder text, AgeNameRule band) => text.Append(band.MinimumAge.ToString("R", System.Globalization.CultureInfo.InvariantCulture))
+            .Append('\t').Append(Encode(band.Pattern)).Append('\t').Append(Encode(band.ChinesePattern)).Append('\n');
+        static string Encode(string value) => Convert.ToBase64String(Encoding.UTF8.GetBytes(value ?? string.Empty));
+        static string Decode(string value) => Encoding.UTF8.GetString(Convert.FromBase64String(value));
 
         public override void FinalizeInit()
         {
@@ -461,7 +456,7 @@ namespace Odf.PrisonerNames
             {
                 customMode = false;
                 policyText = PolicyText(policy);
-                activeSource = draftSource = ConfigSource(policy, NamingLanguage.Chinese);
+                activeSource = draftSource = ConfigSource();
                 eventSource = eventDraft = NamingRules.DefaultEvents();
             }
         }
@@ -555,9 +550,10 @@ namespace Odf.PrisonerNames
             {
                 customMode = false;
                 policyText = PolicyText(policy);
-                activeSource = draftSource = ConfigSource(policy, NamingLanguage.Chinese);
+                activeSource = draftSource = ConfigSource();
                 eventSource = eventDraft = NamingRules.DefaultEvents();
             }
+            else if (!customMode) activeSource = ConfigSource();
             if (string.IsNullOrEmpty(eventDraft)) eventDraft = eventSource;
             rules = null;
             if (!string.IsNullOrEmpty(activeSource) || !string.IsNullOrEmpty(eventSource))
@@ -795,7 +791,8 @@ namespace Odf.PrisonerNames
         {
             NamePolicy parsed = NamePolicy.CreateDefault();
             if (string.IsNullOrEmpty(text)) return parsed;
-            string[] lines = text.Split('\n');
+            parsed.UseAgePatterns = false;
+            string[] lines = text.Replace("\r\n", "\n").Split('\n');
             if (lines.Length < 9) return parsed;
             NameStyle style;
             if (NamePolicy.TryParseStyle(lines[0], out style)) parsed.Style = style;
@@ -812,8 +809,35 @@ namespace Odf.PrisonerNames
             parsed.Races.Clear();
             parsed.Grades.Clear();
             bool grades = false;
+            bool ages = false;
+            RaceNameRule race = null;
             for (int i = 9; i < lines.Length; i++)
             {
+                if (lines[i] == "---ages")
+                {
+                    ages = true;
+                    parsed.Ages.Clear();
+                    parsed.RaceNames.Clear();
+                    parsed.UseAgePatterns = ++i < lines.Length && lines[i] == "1";
+                    continue;
+                }
+                if (ages)
+                {
+                    if (string.IsNullOrEmpty(lines[i])) continue;
+                    string[] parts = lines[i].Split('\t');
+                    if (parts.Length != 3) throw new ArgumentException("Invalid saved age rule.");
+                    if (parts[0] == "---race")
+                    {
+                        race = new RaceNameRule { Race = Decode(parts[1]), Enabled = parts[2] == "1" };
+                        parsed.RaceNames.Add(race);
+                    }
+                    else
+                    {
+                        var band = new AgeNameRule { MinimumAge = double.Parse(parts[0], System.Globalization.CultureInfo.InvariantCulture), Pattern = Decode(parts[1]), ChinesePattern = Decode(parts[2]) };
+                        (race == null ? parsed.Ages : race.Ages).Add(band);
+                    }
+                    continue;
+                }
                 if (lines[i] == "---") { grades = true; continue; }
                 int split = lines[i].IndexOf('=');
                 if (split <= 0) continue;
@@ -846,7 +870,7 @@ namespace Odf.PrisonerNames
 
         static bool Eligible(Pawn pawn)
         {
-            return pawn != null && !pawn.Destroyed && !pawn.Dead && pawn.IsPrisonerOfColony;
+            return pawn != null && !pawn.Destroyed && !pawn.Dead && pawn.RaceProps != null && pawn.RaceProps.Humanlike && pawn.IsPrisonerOfColony;
         }
 
         static GameContext GameNow()

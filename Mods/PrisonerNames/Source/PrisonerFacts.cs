@@ -114,6 +114,7 @@ namespace Odf.PrisonerNames
                 if (named != null && named.ContainsKey("pattern")) pattern = Convert.ToString(named["pattern"]);
                 NamePolicy policy = CurrentPolicy(record);
                 bool chinese = NamingLanguage.Chinese;
+                if (pattern == null && policy != null) pattern = policy.PatternFor(RaceName(pawn), Age(pawn), chinese);
                 var tokens = new NameTokens
                 {
                     Number = number,
@@ -305,9 +306,9 @@ namespace Odf.PrisonerNames
             return pawn.def.LabelCap.RawText ?? string.Empty;
         }
 
-        static int Age(Pawn pawn)
+        static double Age(Pawn pawn)
         {
-            return pawn.ageTracker == null ? 0 : pawn.ageTracker.AgeBiologicalYears;
+            return pawn.ageTracker == null ? 0d : pawn.ageTracker.AgeBiologicalYearsFloat;
         }
 
         static string InteractionName(Pawn pawn)

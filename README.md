@@ -6,7 +6,7 @@
 
 | 目录 | 包名 | 功能 |
 | --- | --- | --- |
-| [PrisonerNames](Mods/PrisonerNames/README.md) | `odf.nanaloveyuki.prisonernames` | 保留原姓名；支持命名占位符、种族前缀、持久分数／等级、事件规则和单人覆盖 |
+| [PrisonerNames](Mods/PrisonerNames/README.md) | `odf.nanaloveyuki.prisonernames` | 保留原姓名；支持英文命名占位符、年龄段／种族覆盖、持久分数／等级、事件规则和单人覆盖 |
 
 `PrisonerNames` 依赖 Harmony、`nanaloveyuki.oxygendsl` 和 `Nanaloveyuki.IrisMenus`，不依赖 RHAH、HAR 或旧囚犯代号。旧 Mod 仅参考公开功能说明；未读取或复用其实现源码。根目录已有 LICENSE 保持不变。ODF 的 IrisMenus 适配为依赖 Mod 自动提供本机网页编辑／退出操作，IrisMenus 不反向依赖 ODF。
 
@@ -31,6 +31,18 @@ dotnet run --project Tests/PrisonerNames.Checks.csproj -c Release
 默认游戏路径为 `/mnt/e/Apps/Steam/steamapps/common/RimWorld`；`RIMWORLD_DIR` 可覆盖。需要同时安装当前 Oxygen 框架；此仓库部署脚本不会自行修改玩家的启用列表或旧 Mod。部署前检查游戏进程，检查目标包名，并逐文件核对 SHA-256。
 
 新增 Mod 在 `Mods/` 下独立放置 About、LoadFolders、Languages、Oxygen 和 Source；程序集名使用 `Odf.<DirectoryName>`，输出 `tmp/build/<DirectoryName>/`，在 `ODF-Mods.slnx` 添加项目。每个发布包只包含自己的程序集，不重复打包 Oxygen。
+
+## 设置分页与年龄命名验收（2026-10-11）
+
+- 消费端 Release 构建 0 警告、0 错误，47 项行为检查通过。
+- 独立 RimWorld 实测命名／积分／等级分页及共享草稿、年龄段添加、种族部分覆盖、缺译英文回退与中英所属名称别名；真实囚犯在小数年龄边界切换标签，原姓名未改。
+- 新进程读回实际存档，保留六个年龄段、种族覆盖、初始分数 42、囚犯编号和代号。修正真实 Windows Scribe CRLF 导致年龄配置未识别的问题。
+- 实际 IrisMenus 确认后浏览器连接当前存档；生产预览返回 `RaceKid007`。补齐依赖下载 URL，没有放宽编辑器资格校验。只部署到隔离验收安装，不修改玩家安装／配置。
+- 随后移除消费端旧 DSL general 页，避免「囚犯代号」与 Mod 父级名称重复；只保留命名／积分／等级三个子页，开关和名单入口并入命名页，实际游戏操作已验证。
+- 玩家操作说明集中到一个中英「使用指南」Markdown 页；设置页不再展示开发者函数或长占位符列表。主菜单可阅读，实际游戏验证两种语言的渲染与设置页文案。
+- 人形过滤与自动应用实测：原生年龄／前缀选择器只列活动人形 Race；动物 Pawn 不符合囚犯资格。有效年龄样式、积分和等级修改自动应用，无效样式保留旧配置；预览年龄和种族选择不保存配置。新进程读档保留自动应用的年龄样式、起始分数 43 和新增等级。
+- HAR 1.6 实测使用与玩家 `839005762` 安装 SHA-256 一致的 `AlienRace.dll`；启用 NewRatkinPlus 后，`Ratkin` 作为 `AlienRace.ThingDef_AlienRace` 出现在两个原生选择器，年龄覆盖和前缀编辑自动应用，真实设置预览输出 `Alien001`。无需 HAR 硬依赖；旧存档保留的缺失种族覆盖不等于活动候选名单。
+- 原生事件补丁、跨地图／商队和大型 Mod 集合仍未在本轮验收，完整证据见相邻框架 `docs/validation.md`。
 
 ## 玩家配置与网页编辑验收（2026-10-10）
 

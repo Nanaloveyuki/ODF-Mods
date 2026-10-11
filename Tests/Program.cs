@@ -24,6 +24,12 @@ internal static class Program
         Check(NamingRules.ValidateAlias("  ") == null, "blank resumes original");
         Check(NameFormatter.Format("{{grade}}", new NameTokens()) == "{grade}", "escaped braces stay literal");
         Reject(() => NameFormatter.Format("{missing}", new NameTokens()), "unknown placeholder keeps the previous config");
+        var unicode = new NameTokens { Number = 7, NumberText = "007", Grade = "合格", OriginalName = "ユキ", RaceLabel = "종족" };
+        Check(NameFormatter.Format("囚{number_text}·{grade}·{original_name}·{race_label}", unicode) == "囚007·合格·ユキ·종족", "English keys preserve multilingual text and values");
+        Reject(() => NameFormatter.Format("{等级}", unicode), "Chinese placeholder aliases are rejected");
+        Reject(() => NameFormatter.Format("{名前}", unicode), "unknown Japanese placeholder is rejected");
+        Check(NameFormatter.Format("{{等级}}", unicode) == "{等级}", "escaped Unicode text stays literal");
+        AgeNamingChecks.Run(Check);
         var policy = NamePolicy.CreateDefault();
         policy.Grades.Clear();
         policy.Grades.Add(new GradeBand { Minimum = 10d, Name = "Later" });

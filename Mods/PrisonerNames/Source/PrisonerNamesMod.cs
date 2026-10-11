@@ -9,7 +9,7 @@ namespace Odf.PrisonerNames
     {
         public PrisonerNamesMod(ModContentPack content) : base(content)
         {
-            PrisonerNamesHost.Register(this);
+            PrisonerNamesHost.Register();
             NamingRules.ModuleCatalog = new GameModuleCatalog();
             NamingRules.InstalledDefault = LoadInstalledDefault;
             NamingRules.InstalledEvents = () => LoadInstalled("events.oxy");
